@@ -1,15 +1,25 @@
 const express = require('express');
 const { google } = require('googleapis');
 require('dotenv').config();
+const { default: helmet } = require('helmet');
+const compression = require('compression');
+
 const key = require('./service-account-key.json');
 const { Database } = require('./init.mysql');
 
 const app = express();
+
+// MIDDLE WARE
 app.use(express.json());
+// Bao ve thong tin rieng tu cua header
+app.use(helmet());
+// Giam bang thong
+app.use(compression);
 
 // CONNECT DB
 Database.getInstance('psql');
 
+// CODE
 const jwtClient = new google.auth.JWT(key.client_email, null, key.private_key, [
   'https://www.googleapis.com/auth/androidpublisher',
 ]);
